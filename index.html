@@ -1,28 +1,123 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خانه مذهبی</title>
+    <meta name="description" content="خانه مذهبی">
+    <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <title>خانه مضه‌حبی | طراحی حرفه‌ای و خلاقانه</title>
-    <meta name="description" content="خانه مضه‌حبی - ارائه خدمات طراحی وب‌سایت، لوگو، و اپلیکیشن موبایل با کیفیت بالا" />
-    <meta name="author" content="Khaneh Mazzehabi" />
-    <meta name="keywords" content="طراحی وب‌سایت، طراحی لوگو، طراحی اپ موبایل، خانه مضه‌حبی" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- هدر سایت -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <img src="assets/logo.jpg" alt="لوگوی سایت" class="logo-img" />
+                <span>خانه مذهبی</span>
+            </div>
+            <div class="header-controls">
+                <div class="language-switcher">
+                    <button class="lang-btn active" data-lang="fa">فارسی</button>
+                    <button class="lang-btn" data-lang="en">English</button>
+                    <button class="lang-btn" data-lang="ar">العربية</button>
+                </div>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
 
-    <meta property="og:title" content="خانه مضه‌حبی | طراحی حرفه‌ای و خلاقانه" />
-    <meta property="og:description" content="ارائه خدمات طراحی وب‌سایت، لوگو، و اپلیکیشن موبایل با کیفیت بالا" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <!-- بخش اصلی نمونه کارها -->
+    <main class="main">
+        <section class="hero">
+            <div class="container">
+                <h1 class="hero-title">پوستر خانه مذهبی</h1>
+                <p class="hero-subtitle">فعال در زمینه طراحی لوگو، بنر و عکس</p>
+            </div>
+        </section>
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-  </head>
+        <section class="portfolio">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">نمونه کار ها</h2>
+                    <p class="section-subtitle">آثار منتخب طراحی و ساخت لوگو</p>
+                </div>
+                <div class="portfolio-grid" id="portfolioGrid">
+                    <!-- نمونه کارها از طریق JS بارگذاری می‌شوند -->
+                </div>
+            </div>
+        </section>
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+        <!-- فرم سفارش -->
+        <section class="order-form">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">ثبت سفارش</h2>
+                    <p class="section-subtitle">فرم زیر را پر کنید تا با شما تماس بگیریم</p>
+                </div>
+                <form id="orderForm" class="form">
+                    <div class="form-group">
+                        <label for="name">نام و نام خانوادگی <span class="required">*</span></label>
+                        <input type="text" id="name" name="name" required>
+                        <span class="error-message" id="nameError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">شماره تلفن <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" required>
+                        <span class="error-message" id="phoneError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="orderTitle">عنوان سفارش</label>
+                        <input type="text" id="orderTitle" name="orderTitle">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">توضیحات سفارش <span class="required">*</span></label>
+                        <textarea id="description" name="description" rows="5" required></textarea>
+                        <span class="error-message" id="descriptionError"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary">ارسال سفارش</button>
+                </form>
+                <div id="formMessage" class="form-message"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- فوتر -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025. Khaneh Mazzehabi. <a href="https://ehsanpg.ir" target="_blank" rel="noopener noreferrer">Ehsan Group</a></p>
+        </div>
+    </footer>
+
+    <!-- لایت باکس برای نمایش نمونه کارها -->
+    <div id="lightbox" class="lightbox">
+        <div class="lightbox-content">
+            <button class="lightbox-close" id="lightboxClose">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="lightbox-image-container">
+                <img id="lightboxImage" src="" alt="">
+            </div>
+            <div class="lightbox-caption">
+                <h3 id="lightboxTitle"></h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- اسکریپت‌ها -->
+    <script src="scripts.js"></script>
+    <!-- ویجت ترجمه گوگل -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                {pageLanguage: 'fa', includedLanguages: 'en,ar,fa', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 
+                'google_translate_element'
+            );
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
 </html>
