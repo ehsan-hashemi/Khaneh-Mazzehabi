@@ -9,6 +9,36 @@
     <link rel="icon" href="/assets/logo.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* استایل برای پیام‌ها */
+        .form-message {
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+        
+        .form-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .form-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
     <!-- هدر سایت -->
@@ -79,7 +109,12 @@
                         <textarea id="description" name="description" rows="5" required></textarea>
                         <span class="error-message" id="descriptionError"></span>
                     </div>
-                    <button type="submit" class="btn btn-primary">ارسال سفارش</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <span id="submitText">ارسال سفارش</span>
+                        <span id="submitLoading" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i> در حال ارسال...
+                        </span>
+                    </button>
                 </form>
                 <div id="formMessage" class="form-message"></div>
             </div>
@@ -110,6 +145,138 @@
 
     <!-- اسکریپت‌ها -->
     <script src="scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const orderForm = document.getElementById('orderForm');
+            const formMessage = document.getElementById('formMessage');
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            const submitLoading = document.getElementById('submitLoading');
+            
+            // شناسه‌های فیلدهای گوگل فرم جدید
+            const googleFormFields = {
+                name: 'entry.678902572',
+                phone: 'entry.1893846219',
+                orderTitle: 'entry.1878756758',
+                description: 'entry.390484432'
+            };
+            
+            // URL گوگل فرم جدید
+            const googleFormURL = 'https://docs.google.com/forms/d/e/1FAIpQLSes5QQm4WaTh-hkgTvVy418x-24aRTDCMUChTzn9jmVn_3awA/formResponse';
+            
+            orderForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // اعتبارسنجی فرم
+                if (!validateForm()) {
+                    return;
+                }
+                
+                // نمایش حالت لودینگ
+                setLoadingState(true);
+                
+                // جمع‌آوری داده‌های فرم
+                const formData = new FormData(orderForm);
+                
+                // ساخت داده‌ها برای گوگل فرم
+                const submissionData = new URLSearchParams();
+                submissionData.append(googleFormFields.name, formData.get('name'));
+                submissionData.append(googleFormFields.phone, formData.get('phone'));
+                submissionData.append(googleFormFields.orderTitle, formData.get('orderTitle') || '');
+                submissionData.append(googleFormFields.description, formData.get('description'));
+                
+                // ارسال به گوگل فرم
+                fetch(googleFormURL, {
+                    method: 'POST',
+                    body: submissionData,
+                    mode: 'no-cors'
+                })
+                .then(() => {
+                    // از آنجایی که no-cors است، پاسخ را نمی‌توانیم بخوانیم
+                    // اما فرض می‌کنیم ارسال موفق بوده
+                    showMessage('سفارش شما با موفقیت ثبت شد. به زودی با شما تماس خواهیم گرفت.', 'success');
+                    orderForm.reset();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showMessage('خطا در ارسال فرم. لطفاً دوباره تلاش کنید.', 'error');
+                })
+                .finally(() => {
+                    setLoadingState(false);
+                });
+            });
+            
+            function validateForm() {
+                let isValid = true;
+                const name = document.getElementById('name').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const description = document.getElementById('description').value.trim();
+                
+                // پاک کردن پیام‌های خطای قبلی
+                clearErrors();
+                
+                if (name === '') {
+                    showError('nameError', 'لطفاً نام و نام خانوادگی را وارد کنید');
+                    isValid = false;
+                }
+                
+                if (phone === '') {
+                    showError('phoneError', 'لطفاً شماره تلفن را وارد کنید');
+                    isValid = false;
+                } else if (!/^[\d\s\-+\(\)]{10,}$/.test(phone)) {
+                    showError('phoneError', 'لطفاً شماره تلفن معتبر وارد کنید');
+                    isValid = false;
+                }
+                
+                if (description === '') {
+                    showError('descriptionError', 'لطفاً توضیحات سفارش را وارد کنید');
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+            
+            function showError(elementId, message) {
+                const errorElement = document.getElementById(elementId);
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+            
+            function clearErrors() {
+                const errorElements = document.querySelectorAll('.error-message');
+                errorElements.forEach(element => {
+                    element.textContent = '';
+                    element.style.display = 'none';
+                });
+            }
+            
+            function showMessage(message, type) {
+                formMessage.textContent = message;
+                formMessage.className = `form-message ${type}`;
+                formMessage.style.display = 'block';
+                
+                // مخفی کردن پیام بعد از 5 ثانیه
+                setTimeout(() => {
+                    formMessage.style.display = 'none';
+                }, 5000);
+            }
+            
+            function setLoadingState(isLoading) {
+                if (isLoading) {
+                    submitBtn.classList.add('loading');
+                    submitText.style.display = 'none';
+                    submitLoading.style.display = 'inline';
+                    submitBtn.disabled = true;
+                } else {
+                    submitBtn.classList.remove('loading');
+                    submitText.style.display = 'inline';
+                    submitLoading.style.display = 'none';
+                    submitBtn.disabled = false;
+                }
+            }
+        });
+    </script>
+    
     <!-- ویجت ترجمه گوگل -->
     <script type="text/javascript">
         function googleTranslateElementInit() {
